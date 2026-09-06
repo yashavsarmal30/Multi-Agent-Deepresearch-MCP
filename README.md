@@ -29,7 +29,7 @@ Features a full **Model Context Protocol (MCP) server** for AI clients (Cursor, 
   - **DuckDuckGo (Free)**: Zero setup, privacy-preserving live web search out of the box—no API key required!
   - **Intelligent Fallback**: Seamlessly uses LinkUp when configured, and falls back to DuckDuckGo automatically.
 - 🧠 **Multi-Provider LLM Orchestration**:
-  - Auto-detects and connects to **OpenAI** (`gpt-4o`, `gpt-4o-mini`), **Groq** (`llama-3.3-70b`), **Anthropic** (`claude-3-5-sonnet`, `claude-3-5-haiku`), **Google Gemini** (`gemini-2.0-flash`), **DeepSeek**, or local **Ollama** (`deepseek-r1`, `llama3`).
+  - Auto-detects and connects to **Google Gemini** (`gemini-3.6-pro`, `gemini-3.8-flash`, `gemini-2.5-flash`), **OpenAI** (`gpt-4o`, `gpt-4o-mini`), **Groq** (`llama-3.3-70b`), **Anthropic** (`claude-3-5-sonnet`), **DeepSeek**, or local **Ollama** (`deepseek-r1`, `llama3`).
 - 💻 **Modern React.js Web UI**:
   - **No login or authentication needed**—start researching immediately.
   - Live animated multi-agent activity stages with real-time status updates (SSE).
@@ -97,11 +97,11 @@ flowchart TD
 git clone https://github.com/your-username/Multi-Agent-deep-researcher-mcp.git
 cd Multi-Agent-deep-researcher-mcp
 
-# Synchronize python environment with uv
-uv sync
+# Option A: Quick installation with pip
+pip install -r requirements.txt
 
-# Or using standard pip:
-# pip install -e .
+# Option B: Synchronize virtual environment with uv (recommended)
+uv sync
 ```
 
 ### 3. Build the React Web UI
@@ -130,11 +130,18 @@ Configure your preferred keys (DuckDuckGo search works immediately without any s
 LINKUP_API_KEY=your_linkup_key_here
 
 # Choose at least ONE LLM provider:
+# Google Gemini (Default: Gemini 3.6 Pro - get key at https://aistudio.google.com/apikey)
+GEMINI_API_KEY=AIzaSy...
+
+# OR OpenAI:
 OPENAI_API_KEY=sk-...
+
 # OR Groq (free & ultra-fast):
 GROQ_API_KEY=gsk_...
+
 # OR Anthropic:
 ANTHROPIC_API_KEY=sk-ant-...
+
 # OR Local Ollama (default http://localhost:11434 with deepseek-r1:7b)
 ```
 

@@ -54,7 +54,7 @@ with st.sidebar:
             "openai": "OpenAI (GPT-4o / GPT-4o-mini)",
             "groq": "Groq (Llama-3.3-70b Ultra Fast)",
             "anthropic": "Anthropic (Claude 3.5)",
-            "gemini": "Google Gemini (2.0 Flash)",
+            "gemini": "Google Gemini (Gemini 3.6 Pro)",
             "ollama": "Ollama Local (DeepSeek-R1 / Llama3)",
         }[x],
     )

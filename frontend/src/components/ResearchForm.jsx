@@ -216,7 +216,7 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
               <option value="openai">OpenAI (GPT-4o)</option>
               <option value="groq">Groq (Llama 3.3 70B Fast)</option>
               <option value="anthropic">Anthropic (Claude 3.5)</option>
-              <option value="gemini">Google Gemini (2.0 Flash)</option>
+              <option value="gemini">Google Gemini (Gemini 3.6 Pro)</option>
               <option value="ollama">Ollama Local (DeepSeek-R1)</option>
             </select>
           </div>

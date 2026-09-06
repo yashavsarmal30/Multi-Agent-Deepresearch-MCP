@@ -1,0 +1,26 @@
+# ==============================================================================
+# Multi-Agent Deep Researcher MCP Dependencies
+# Quick installation: pip install -r requirements.txt
+# ==============================================================================
+
+# Core Multi-Agent Orchestration & LLMs
+crewai>=0.114.0
+openai>=1.75.0
+pydantic>=2.10.0
+python-dotenv>=1.1.0
+
+# Model Context Protocol (MCP) Official SDK
+mcp>=1.6.0
+
+# Web Search Engines (LinkUp Deep Web & Free DuckDuckGo)
+linkup-sdk>=0.2.4
+ddgs>=9.16.0
+duckduckgo-search>=8.1.1
+
+# FastAPI REST & SSE Backend
+fastapi>=0.115.9
+uvicorn>=0.34.1
+
+# Optional Streamlit UI
+streamlit>=1.44.1
+streamlit-crewai-process-output>=0.1.1
