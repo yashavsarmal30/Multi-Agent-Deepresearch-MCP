@@ -3,7 +3,16 @@ import { marked } from "marked";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import { Copy, Download, Printer, Check, ExternalLink, BookOpen, Clock, FileText } from "lucide-react";
+import {
+  Copy,
+  Download,
+  Printer,
+  Check,
+  ExternalLink,
+  BookOpen,
+  Clock,
+  FileText,
+} from "lucide-react";
 
 export default function ReportView({ result }) {
   const [copied, setCopied] = useState(false);
@@ -56,11 +65,16 @@ export default function ReportView({ result }) {
   };
 
   const handleDownload = () => {
-    const blob = new Blob([reportText], { type: "text/markdown;charset=utf-8;" });
+    const blob = new Blob([reportText], {
+      type: "text/markdown;charset=utf-8;",
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `research_${query.slice(0, 30).replace(/\s+/g, "_")}.md`);
+    link.setAttribute(
+      "download",
+      `research_${query.slice(0, 30).replace(/\s+/g, "_")}.md`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

@@ -12,14 +12,14 @@ logger = logging.getLogger(__name__)
 
 class LinkUpSearchInput(BaseModel):
     """Input schema for LinkUp Search Tool."""
+
     query: str = Field(..., description="The search query to perform")
     depth: Literal["standard", "deep"] = Field(
-        default="standard",
-        description="Depth of search: 'standard' or 'deep'"
+        default="standard", description="Depth of search: 'standard' or 'deep'"
     )
     output_type: Literal["searchResults", "sourcedAnswer", "structured"] = Field(
         default="searchResults",
-        description="Output type: 'searchResults', 'sourcedAnswer', or 'structured'"
+        description="Output type: 'searchResults', 'sourcedAnswer', or 'structured'",
     )
 
 
@@ -32,10 +32,7 @@ class LinkUpSearchTool(BaseTool):
     args_schema: Type[BaseModel] = LinkUpSearchInput
 
     def _run(
-        self,
-        query: str,
-        depth: str = "standard",
-        output_type: str = "searchResults"
+        self, query: str, depth: str = "standard", output_type: str = "searchResults"
     ) -> str:
         """Execute LinkUp search and return results."""
         api_key = os.getenv("LINKUP_API_KEY")
@@ -49,11 +46,7 @@ class LinkUpSearchTool(BaseTool):
             from linkup import LinkupClient
 
             client = LinkupClient(api_key=api_key)
-            response = client.search(
-                query=query,
-                depth=depth,
-                output_type=output_type
-            )
+            response = client.search(query=query, depth=depth, output_type=output_type)
             return str(response)
         except Exception as exc:
             logger.warning(f"LinkUp search failed: {exc}")
@@ -62,10 +55,10 @@ class LinkUpSearchTool(BaseTool):
 
 class DuckDuckGoSearchInput(BaseModel):
     """Input schema for DuckDuckGo Search Tool."""
+
     query: str = Field(..., description="The search query to perform")
     max_results: int = Field(
-        default=6,
-        description="Number of search results to return (max 15)"
+        default=6, description="Number of search results to return (max 15)"
     )
 
 
@@ -95,7 +88,9 @@ class DuckDuckGoSearchTool(BaseTool):
                 title = item.get("title", "Untitled")
                 link = item.get("href", item.get("link", ""))
                 snippet = item.get("body", item.get("snippet", ""))
-                formatted.append(f"**{idx}. [{title}]({link})**\n{snippet}\nURL: {link}\n")
+                formatted.append(
+                    f"**{idx}. [{title}]({link})**\n{snippet}\nURL: {link}\n"
+                )
 
             return "\n".join(formatted)
         except Exception as exc:
@@ -105,14 +100,14 @@ class DuckDuckGoSearchTool(BaseTool):
 
 class UnifiedSearchInput(BaseModel):
     """Input schema for Unified Multi-Provider Search Tool."""
+
     query: str = Field(..., description="The search query to perform")
     depth: Literal["standard", "deep"] = Field(
-        default="standard",
-        description="Search thoroughness: 'standard' or 'deep'"
+        default="standard", description="Search thoroughness: 'standard' or 'deep'"
     )
     engine: Literal["auto", "linkup", "duckduckgo"] = Field(
         default="auto",
-        description="Search engine to use. 'auto' selects LinkUp if API key exists, otherwise DuckDuckGo."
+        description="Search engine to use. 'auto' selects LinkUp if API key exists, otherwise DuckDuckGo.",
     )
 
 
@@ -124,12 +119,7 @@ class UnifiedSearchTool(BaseTool):
     )
     args_schema: Type[BaseModel] = UnifiedSearchInput
 
-    def _run(
-        self,
-        query: str,
-        depth: str = "standard",
-        engine: str = "auto"
-    ) -> str:
+    def _run(self, query: str, depth: str = "standard", engine: str = "auto") -> str:
         """Execute search with intelligent fallback."""
         linkup_key = os.getenv("LINKUP_API_KEY")
 
@@ -138,12 +128,20 @@ class UnifiedSearchTool(BaseTool):
         if use_linkup and linkup_key:
             try:
                 linkup_tool = LinkUpSearchTool()
-                result = linkup_tool._run(query, depth=depth, output_type="searchResults")
+                result = linkup_tool._run(
+                    query, depth=depth, output_type="searchResults"
+                )
                 # If linkup returned an error or empty, fall back to DuckDuckGo
-                if result and not result.startswith("LinkUp search error") and not result.startswith("LinkUp API Key is missing"):
+                if (
+                    result
+                    and not result.startswith("LinkUp search error")
+                    and not result.startswith("LinkUp API Key is missing")
+                ):
                     return result
             except Exception as exc:
-                logger.info(f"LinkUp search failed ({exc}), falling back to DuckDuckGo.")
+                logger.info(
+                    f"LinkUp search failed ({exc}), falling back to DuckDuckGo."
+                )
 
         # Fallback / Default: DuckDuckGo
         ddg_tool = DuckDuckGoSearchTool()
@@ -152,10 +150,7 @@ class UnifiedSearchTool(BaseTool):
 
 
 def perform_search(
-    query: str,
-    depth: str = "standard",
-    provider: str = "auto",
-    max_results: int = 6
+    query: str, depth: str = "standard", provider: str = "auto", max_results: int = 6
 ) -> dict[str, Any]:
     """Helper function to execute a direct web search from Python code or API."""
     linkup_key = os.getenv("LINKUP_API_KEY")
@@ -169,11 +164,7 @@ def perform_search(
             from linkup import LinkupClient
 
             client = LinkupClient(api_key=linkup_key)
-            resp = client.search(
-                query=query,
-                depth=depth,
-                output_type="searchResults"
-            )
+            resp = client.search(query=query, depth=depth, output_type="searchResults")
             raw_output = str(resp)
             engine_used = "linkup"
         except Exception as exc:
@@ -189,21 +180,18 @@ def perform_search(
         results = ddgs.text(query, max_results=max_results)
         items = []
         for r in results:
-            items.append({
-                "title": r.get("title", ""),
-                "url": r.get("href", r.get("link", "")),
-                "snippet": r.get("body", r.get("snippet", ""))
-            })
+            items.append(
+                {
+                    "title": r.get("title", ""),
+                    "url": r.get("href", r.get("link", "")),
+                    "snippet": r.get("body", r.get("snippet", "")),
+                }
+            )
         return {
             "query": query,
             "engine": "duckduckgo",
             "results": items,
-            "raw": str(results)
+            "raw": str(results),
         }
 
-    return {
-        "query": query,
-        "engine": engine_used,
-        "results": [],
-        "raw": raw_output
-    }
+    return {"query": query, "engine": engine_used, "results": [], "raw": raw_output}

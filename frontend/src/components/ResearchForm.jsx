@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Card } from "./ui/card";
-import { ArrowUp, CornerDownLeft, Loader2, Sparkles, Globe, Cpu, Zap } from "lucide-react";
+import {
+  ArrowUp,
+  CornerDownLeft,
+  Loader2,
+  Sparkles,
+  Globe,
+  Cpu,
+  Zap,
+} from "lucide-react";
 
 const SUGGESTED_TOPICS = [
   "Commercial status of Solid-State Batteries in 2026",
@@ -101,10 +109,14 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
                   disabled={isLoading}
                   className="w-full sm:w-auto h-8 rounded-lg border bg-background px-2.5 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus:ring-1 focus:ring-ring"
                 >
-                  <option value="gemini">Model: Google Gemini (Gemini 3.6 Flash)</option>
+                  <option value="gemini">
+                    Model: Google Gemini (Gemini 3.6 Flash)
+                  </option>
                   <option value="openai">Model: OpenAI (GPT-4o)</option>
                   <option value="groq">Model: Groq (Llama-3.3-70B)</option>
-                  <option value="anthropic">Model: Anthropic (Claude 3.5)</option>
+                  <option value="anthropic">
+                    Model: Anthropic (Claude 3.5)
+                  </option>
                   <option value="ollama">Model: Local Ollama</option>
                   <option value="auto">Model: Auto Detect</option>
                 </select>
@@ -136,7 +148,9 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
 
       {/* Suggestion Chips */}
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-center text-xs text-muted-foreground">
-        <span className="text-[11px] font-medium text-muted-foreground/70">Suggestions:</span>
+        <span className="text-[11px] font-medium text-muted-foreground/70">
+          Suggestions:
+        </span>
         {SUGGESTED_TOPICS.map((topic, i) => (
           <button
             key={i}

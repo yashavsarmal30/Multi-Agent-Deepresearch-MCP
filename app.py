@@ -22,7 +22,9 @@ if "openai_api_key" not in st.session_state:
 if "groq_api_key" not in st.session_state:
     st.session_state.groq_api_key = os.getenv("GROQ_API_KEY", "")
 if "gemini_api_key" not in st.session_state:
-    st.session_state.gemini_api_key = os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")
+    st.session_state.gemini_api_key = os.getenv("GEMINI_API_KEY", "") or os.getenv(
+        "GOOGLE_API_KEY", ""
+    )
 
 
 def reset_chat():
@@ -63,7 +65,11 @@ with st.sidebar:
     depth = st.radio(
         "Investigation Depth",
         options=["standard", "deep"],
-        format_func=lambda x: "Standard (Fast Overview)" if x == "standard" else "Deep Research (Exhaustive)",
+        format_func=lambda x: (
+            "Standard (Fast Overview)"
+            if x == "standard"
+            else "Deep Research (Exhaustive)"
+        ),
     )
 
     st.markdown("---")
@@ -118,8 +124,13 @@ with st.sidebar:
 # Header
 col1, col2 = st.columns([6, 1])
 with col1:
-    st.markdown("<h2 style='color: #3b82f6;'>🔍 Agentic Deep Researcher</h2>", unsafe_allow_html=True)
-    st.caption("Autonomous multi-agent research crew powered by CrewAI, LinkUp, DuckDuckGo, and MCP.")
+    st.markdown(
+        "<h2 style='color: #3b82f6;'>🔍 Agentic Deep Researcher</h2>",
+        unsafe_allow_html=True,
+    )
+    st.caption(
+        "Autonomous multi-agent research crew powered by CrewAI, LinkUp, DuckDuckGo, and MCP."
+    )
 with col2:
     st.button("Clear Chat ↺", on_click=reset_chat)
 

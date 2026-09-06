@@ -30,8 +30,10 @@ os.makedirs(REPORTS_DIR, exist_ok=True)
 
 
 import litellm
+
 litellm.drop_params = True
 litellm.num_retries = 3
+
 
 class GeminiLLM(LLM):
     """Custom CrewAI LLM subclass for Google Gemini API.
@@ -56,12 +58,19 @@ class GeminiLLM(LLM):
                 role = "user" if m.get("role") in ["user", "system"] else "assistant"
                 content = str(m.get("content") or "")
                 if cleaned and cleaned[-1]["role"] == role:
-                    cleaned[-1]["content"] = f"{cleaned[-1]['content']}\n{content}".strip()
+                    cleaned[-1]["content"] = (
+                        f"{cleaned[-1]['content']}\n{content}".strip()
+                    )
                 else:
                     cleaned.append({"role": role, "content": content})
 
             if cleaned and cleaned[-1]["role"] == "assistant":
-                cleaned.append({"role": "user", "content": "Please proceed with the research task."})
+                cleaned.append(
+                    {
+                        "role": "user",
+                        "content": "Please proceed with the research task.",
+                    }
+                )
 
             messages = cleaned
 
@@ -76,10 +85,17 @@ class GeminiLLM(LLM):
                 )
             except Exception as e:
                 err_str = str(e)
-                if ("429" in err_str or "RateLimit" in err_str or "RESOURCE_EXHAUSTED" in err_str) and attempt < max_attempts - 1:
+                if (
+                    "429" in err_str
+                    or "RateLimit" in err_str
+                    or "RESOURCE_EXHAUSTED" in err_str
+                ) and attempt < max_attempts - 1:
                     import time
+
                     wait_time = (attempt + 1) * 4.0
-                    logger.warning(f"API rate limit hit (429). Waiting {wait_time}s before retry {attempt + 1}/{max_attempts}...")
+                    logger.warning(
+                        f"API rate limit hit (429). Waiting {wait_time}s before retry {attempt + 1}/{max_attempts}..."
+                    )
                     time.sleep(wait_time)
                 else:
                     raise
@@ -141,9 +157,15 @@ def get_llm_client(
 
     elif detected_provider == "gemini":
         raw_model = selected_model or os.getenv("GEMINI_MODEL") or "gemini-3.6-flash"
-        if "gemini-3.6-pro" in raw_model or raw_model.endswith("-pro") or raw_model == "gemini-pro":
+        if (
+            "gemini-3.6-pro" in raw_model
+            or raw_model.endswith("-pro")
+            or raw_model == "gemini-pro"
+        ):
             raw_model = "gemini-3.6-flash"
-        target_model = raw_model if raw_model.startswith("gemini/") else f"gemini/{raw_model}"
+        target_model = (
+            raw_model if raw_model.startswith("gemini/") else f"gemini/{raw_model}"
+        )
         key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         if key:
             os.environ["GEMINI_API_KEY"] = key

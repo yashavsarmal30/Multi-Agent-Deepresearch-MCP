@@ -40,7 +40,10 @@ export default function HistoryDrawer({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="right" className="flex flex-col p-6 w-full sm:max-w-md">
+      <SheetContent
+        side="right"
+        className="flex flex-col p-6 w-full sm:max-w-md"
+      >
         <SheetHeader className="pb-4 border-b">
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-primary" />
@@ -58,7 +61,9 @@ export default function HistoryDrawer({
             <div className="py-12 text-center text-xs text-muted-foreground">
               <FileText className="h-8 w-8 mx-auto mb-2 opacity-30" />
               <p>No saved reports found.</p>
-              <p className="mt-1 text-[11px]">Run a research query to archive reports.</p>
+              <p className="mt-1 text-[11px]">
+                Run a research query to archive reports.
+              </p>
             </div>
           ) : (
             history.map((item) => (

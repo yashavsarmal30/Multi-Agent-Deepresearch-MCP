@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { Loader2, CheckCircle2, Circle, Clock, Search, Brain, FileText } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle2,
+  Circle,
+  Clock,
+  Search,
+  Brain,
+  FileText,
+} from "lucide-react";
 
 export default function AgentProgress({ currentStage, stageMessage }) {
   const [seconds, setSeconds] = useState(0);
@@ -29,13 +37,15 @@ export default function AgentProgress({ currentStage, stageMessage }) {
     {
       id: "analyzing",
       name: "Research Analyst",
-      description: "Synthesizing evidence, validating claims & grouping insights",
+      description:
+        "Synthesizing evidence, validating claims & grouping insights",
       icon: Brain,
     },
     {
       id: "writing",
       name: "Technical Writer",
-      description: "Authoring executive summary, thematic sections & formatted references",
+      description:
+        "Authoring executive summary, thematic sections & formatted references",
       icon: FileText,
     },
   ];
@@ -52,7 +62,11 @@ export default function AgentProgress({ currentStage, stageMessage }) {
       if (index === 1) return "running";
       return "waiting";
     }
-    if (currentStage === "searching" || currentStage === "planning" || currentStage === "init") {
+    if (
+      currentStage === "searching" ||
+      currentStage === "planning" ||
+      currentStage === "init"
+    ) {
       if (index === 0) return "running";
       return "waiting";
     }
@@ -78,7 +92,9 @@ export default function AgentProgress({ currentStage, stageMessage }) {
         {/* Status log pill */}
         {stageMessage && (
           <div className="mb-4 rounded-lg border bg-muted/30 px-3.5 py-2.5 text-xs text-foreground font-mono text-center sm:text-left flex flex-col sm:flex-row items-center gap-1.5 justify-center sm:justify-start">
-            <span className="text-muted-foreground font-sans font-medium">Status:</span>
+            <span className="text-muted-foreground font-sans font-medium">
+              Status:
+            </span>
             <span>{stageMessage}</span>
           </div>
         )}
@@ -96,8 +112,8 @@ export default function AgentProgress({ currentStage, stageMessage }) {
                   state === "running"
                     ? "border-primary/50 bg-primary/5"
                     : state === "done"
-                    ? "border-emerald-500/30 bg-emerald-500/5"
-                    : "border-border bg-muted/20 text-muted-foreground"
+                      ? "border-emerald-500/30 bg-emerald-500/5"
+                      : "border-border bg-muted/20 text-muted-foreground"
                 }`}
               >
                 <div>
@@ -124,9 +140,15 @@ export default function AgentProgress({ currentStage, stageMessage }) {
                 </div>
 
                 <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between text-[10px]">
-                  <span className="text-muted-foreground">Step {idx + 1} of 3</span>
+                  <span className="text-muted-foreground">
+                    Step {idx + 1} of 3
+                  </span>
                   <span className="font-medium capitalize">
-                    {state === "done" ? "Completed" : state === "running" ? "Running" : "Pending"}
+                    {state === "done"
+                      ? "Completed"
+                      : state === "running"
+                        ? "Running"
+                        : "Pending"}
                   </span>
                 </div>
               </div>

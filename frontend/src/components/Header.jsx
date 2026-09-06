@@ -25,7 +25,10 @@ export default function Header({
             <span className="font-semibold tracking-tight text-foreground sm:text-base">
               Deep Researcher
             </span>
-            <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+            <Badge
+              variant="outline"
+              className="h-5 px-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground"
+            >
               MCP
             </Badge>
           </div>
@@ -74,7 +77,11 @@ export default function Header({
             className="h-8 w-8 text-muted-foreground hover:text-foreground"
             title="Toggle theme"
           >
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {isDark ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </div>

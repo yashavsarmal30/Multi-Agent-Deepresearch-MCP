@@ -76,14 +76,17 @@ export default function App() {
     });
 
     if (params.provider) queryParams.set("provider", params.provider);
-    if (params.provider === "gemini" && geminiKey) queryParams.set("gemini_key", geminiKey);
+    if (params.provider === "gemini" && geminiKey)
+      queryParams.set("gemini_key", geminiKey);
     else if (openaiKey) queryParams.set("api_key", openaiKey);
     else if (groqKey) queryParams.set("api_key", groqKey);
     else if (geminiKey) queryParams.set("gemini_key", geminiKey);
     if (linkupKey) queryParams.set("linkup_key", linkupKey);
 
     try {
-      const eventSource = new EventSource(`/api/research/stream?${queryParams.toString()}`);
+      const eventSource = new EventSource(
+        `/api/research/stream?${queryParams.toString()}`,
+      );
 
       eventSource.onmessage = (event) => {
         try {
@@ -112,7 +115,12 @@ export default function App() {
       eventSource.onerror = (err) => {
         console.error("SSE connection error:", err);
         eventSource.close();
-        fallbackPostResearch(params, openaiKey || groqKey, linkupKey, geminiKey);
+        fallbackPostResearch(
+          params,
+          openaiKey || groqKey,
+          linkupKey,
+          geminiKey,
+        );
       };
     } catch (err) {
       fallbackPostResearch(params, openaiKey || groqKey, linkupKey, geminiKey);
@@ -230,7 +238,8 @@ export default function App() {
               What do you want to explore?
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground text-center max-w-md">
-              Autonomous multi-agent deep research powered by CrewAI, LinkUp, DuckDuckGo, and MCP.
+              Autonomous multi-agent deep research powered by CrewAI, LinkUp,
+              DuckDuckGo, and MCP.
             </p>
           </div>
         )}

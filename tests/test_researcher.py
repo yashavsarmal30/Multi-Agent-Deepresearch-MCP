@@ -75,7 +75,9 @@ class TestFastAPIServer(unittest.TestCase):
         self.assertTrue(data["providers"]["duckduckgo"])
 
     def test_quick_search_api(self):
-        resp = self.client.post("/api/search", json={"query": "FastAPI python", "max_results": 2})
+        resp = self.client.post(
+            "/api/search", json={"query": "FastAPI python", "max_results": 2}
+        )
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
         self.assertEqual(data["query"], "FastAPI python")

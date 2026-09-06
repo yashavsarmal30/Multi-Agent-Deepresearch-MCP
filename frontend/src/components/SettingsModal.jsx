@@ -11,7 +11,12 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { ExternalLink, Check } from "lucide-react";
 
-export default function SettingsModal({ isOpen, onClose, config, onSaveConfig }) {
+export default function SettingsModal({
+  isOpen,
+  onClose,
+  config,
+  onSaveConfig,
+}) {
   const [geminiKey, setGeminiKey] = useState("");
   const [linkupKey, setLinkupKey] = useState("");
   const [openaiKey, setOpenaiKey] = useState("");
@@ -26,7 +31,9 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
     setOpenaiKey(localStorage.getItem("openai_api_key") || "");
     setGroqKey(localStorage.getItem("groq_api_key") || "");
     setAnthropicKey(localStorage.getItem("anthropic_api_key") || "");
-    setOllamaUrl(localStorage.getItem("ollama_base_url") || "http://localhost:11434");
+    setOllamaUrl(
+      localStorage.getItem("ollama_base_url") || "http://localhost:11434",
+    );
   }, [isOpen]);
 
   const handleSave = async (e) => {
@@ -64,7 +71,8 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
             API Keys & Providers
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
-            Configure keys for your browser session. Free DuckDuckGo search works without any API key.
+            Configure keys for your browser session. Free DuckDuckGo search
+            works without any API key.
           </DialogDescription>
         </DialogHeader>
 
@@ -72,7 +80,9 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
           {/* Google Gemini */}
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <label className="font-medium text-foreground">Google Gemini API Key</label>
+              <label className="font-medium text-foreground">
+                Google Gemini API Key
+              </label>
               <a
                 href="https://aistudio.google.com/apikey"
                 target="_blank"
@@ -86,7 +96,11 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
               type="password"
               value={geminiKey}
               onChange={(e) => setGeminiKey(e.target.value)}
-              placeholder={config?.providers?.gemini ? "•••••••••••• (Configured via env)" : "AIzaSy..."}
+              placeholder={
+                config?.providers?.gemini
+                  ? "•••••••••••• (Configured via env)"
+                  : "AIzaSy..."
+              }
               className="h-8 text-xs font-mono"
             />
           </div>
@@ -94,7 +108,9 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
           {/* LinkUp Search */}
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <label className="font-medium text-foreground">LinkUp API Key (Optional)</label>
+              <label className="font-medium text-foreground">
+                LinkUp API Key (Optional)
+              </label>
               <a
                 href="https://app.linkup.so/sign-up"
                 target="_blank"
@@ -108,38 +124,56 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
               type="password"
               value={linkupKey}
               onChange={(e) => setLinkupKey(e.target.value)}
-              placeholder={config?.providers?.linkup ? "•••••••••••• (Configured via env)" : "Enter LinkUp key"}
+              placeholder={
+                config?.providers?.linkup
+                  ? "•••••••••••• (Configured via env)"
+                  : "Enter LinkUp key"
+              }
               className="h-8 text-xs font-mono"
             />
           </div>
 
           {/* OpenAI */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-foreground">OpenAI API Key (Optional)</label>
+            <label className="text-xs font-medium text-foreground">
+              OpenAI API Key (Optional)
+            </label>
             <Input
               type="password"
               value={openaiKey}
               onChange={(e) => setOpenaiKey(e.target.value)}
-              placeholder={config?.providers?.openai ? "•••••••••••• (Configured via env)" : "sk-..."}
+              placeholder={
+                config?.providers?.openai
+                  ? "•••••••••••• (Configured via env)"
+                  : "sk-..."
+              }
               className="h-8 text-xs font-mono"
             />
           </div>
 
           {/* Groq */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-foreground">Groq API Key (Optional)</label>
+            <label className="text-xs font-medium text-foreground">
+              Groq API Key (Optional)
+            </label>
             <Input
               type="password"
               value={groqKey}
               onChange={(e) => setGroqKey(e.target.value)}
-              placeholder={config?.providers?.groq ? "•••••••••••• (Configured via env)" : "gsk_..."}
+              placeholder={
+                config?.providers?.groq
+                  ? "•••••••••••• (Configured via env)"
+                  : "gsk_..."
+              }
               className="h-8 text-xs font-mono"
             />
           </div>
 
           {/* Ollama Local URL */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-foreground">Ollama Base URL (Local)</label>
+            <label className="text-xs font-medium text-foreground">
+              Ollama Base URL (Local)
+            </label>
             <Input
               type="text"
               value={ollamaUrl}

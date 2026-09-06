@@ -16,14 +16,13 @@ const badgeVariants = cva(
         outline: "text-foreground",
         success:
           "border-transparent bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
-        info:
-          "border-transparent bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20",
+        info: "border-transparent bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/20",
       },
     },
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
 function Badge({ className, variant, ...props }) {

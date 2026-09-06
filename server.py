@@ -128,11 +128,13 @@ def list_research_reports() -> str:
         if fname.endswith(".md"):
             path = os.path.join(REPORTS_DIR, fname)
             size = os.path.getsize(path)
-            reports.append({
-                "filename": fname,
-                "size_bytes": size,
-                "resource_uri": f"research://reports/{fname}",
-            })
+            reports.append(
+                {
+                    "filename": fname,
+                    "size_bytes": size,
+                    "resource_uri": f"research://reports/{fname}",
+                }
+            )
     return json.dumps(reports, indent=2)
 
 
@@ -164,10 +166,16 @@ def get_system_status() -> str:
         "openai_api_configured": bool(os.getenv("OPENAI_API_KEY")),
         "groq_api_configured": bool(os.getenv("GROQ_API_KEY")),
         "anthropic_api_configured": bool(os.getenv("ANTHROPIC_API_KEY")),
-        "gemini_api_configured": bool(os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")),
+        "gemini_api_configured": bool(
+            os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        ),
         "duckduckgo_available": True,
-        "default_search_engine": "linkup" if os.getenv("LINKUP_API_KEY") else "duckduckgo",
-        "reports_count": len([f for f in os.listdir(REPORTS_DIR) if f.endswith(".md")]) if os.path.exists(REPORTS_DIR) else 0,
+        "default_search_engine": "linkup"
+        if os.getenv("LINKUP_API_KEY")
+        else "duckduckgo",
+        "reports_count": len([f for f in os.listdir(REPORTS_DIR) if f.endswith(".md")])
+        if os.path.exists(REPORTS_DIR)
+        else 0,
     }
     return json.dumps(status, indent=2)
 
@@ -206,7 +214,9 @@ def competitive_analysis_prompt(entity_a: str, entity_b: str) -> str:
 
 def main():
     """Main entry point to run the MCP server."""
-    parser = argparse.ArgumentParser(description="Multi-Agent Deep Researcher MCP Server")
+    parser = argparse.ArgumentParser(
+        description="Multi-Agent Deep Researcher MCP Server"
+    )
     parser.add_argument(
         "--transport",
         choices=["stdio", "sse"],
@@ -222,7 +232,9 @@ def main():
     args = parser.parse_args()
 
     if args.transport == "sse":
-        logger.info(f"Starting Deep Researcher MCP Server on SSE transport (port {args.port})...")
+        logger.info(
+            f"Starting Deep Researcher MCP Server on SSE transport (port {args.port})..."
+        )
         mcp.run(transport="sse")
     else:
         logger.info("Starting Deep Researcher MCP Server on stdio transport...")

@@ -47,18 +47,22 @@ app.add_middleware(
 class ResearchRequest(BaseModel):
     query: str = Field(..., description="The research topic or question")
     depth: Literal["standard", "deep"] = Field(
-        default="standard",
-        description="Depth of research investigation"
+        default="standard", description="Depth of research investigation"
     )
     search_engine: Literal["auto", "linkup", "duckduckgo"] = Field(
-        default="auto",
-        description="Search engine provider"
+        default="auto", description="Search engine provider"
     )
     model: str | None = Field(default=None, description="Model override")
     provider: str | None = Field(default=None, description="LLM Provider override")
-    api_key: str | None = Field(default=None, description="Optional LLM API key override")
-    linkup_api_key: str | None = Field(default=None, description="Optional LinkUp API key override")
-    gemini_api_key: str | None = Field(default=None, description="Optional Google Gemini API key override")
+    api_key: str | None = Field(
+        default=None, description="Optional LLM API key override"
+    )
+    linkup_api_key: str | None = Field(
+        default=None, description="Optional LinkUp API key override"
+    )
+    gemini_api_key: str | None = Field(
+        default=None, description="Optional Google Gemini API key override"
+    )
 
 
 class SearchRequest(BaseModel):
@@ -128,7 +132,9 @@ def get_config() -> dict[str, Any]:
         },
         "active_provider": active_provider,
         "active_model": os.getenv("LLM_MODEL", "auto"),
-        "default_search_engine": "linkup" if os.getenv("LINKUP_API_KEY") else "duckduckgo",
+        "default_search_engine": "linkup"
+        if os.getenv("LINKUP_API_KEY")
+        else "duckduckgo",
     }
 
 
@@ -268,12 +274,14 @@ def get_reports_history() -> list[dict[str, Any]]:
         if fname.endswith(".md"):
             fpath = os.path.join(REPORTS_DIR, fname)
             stat = os.stat(fpath)
-            reports.append({
-                "id": fname,
-                "filename": fname,
-                "created_at": datetime.fromtimestamp(stat.st_mtime).isoformat(),
-                "size_bytes": stat.st_size,
-            })
+            reports.append(
+                {
+                    "id": fname,
+                    "filename": fname,
+                    "created_at": datetime.fromtimestamp(stat.st_mtime).isoformat(),
+                    "size_bytes": stat.st_size,
+                }
+            )
     return reports
 
 
@@ -307,9 +315,15 @@ def delete_report_by_name(filename: str) -> dict[str, Any]:
 
 
 # Serve built React frontend if dist exists
-FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend", "dist")
+FRONTEND_DIST = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "frontend", "dist"
+)
 if os.path.exists(FRONTEND_DIST):
-    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")), name="assets")
+    app.mount(
+        "/assets",
+        StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")),
+        name="assets",
+    )
 
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
