@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+.pytest_cache/
+
+# Virtual Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Environment variables & secrets
+.env
+*.env
+!.env.example
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+.vite/
+
+# Research reports (keep reports directory)
+reports/*
+!reports/.gitkeep
+
+# IDEs & System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

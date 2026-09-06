@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deep-researcher-mcp"
+version = "1.0.0"
+description = "Autonomous Multi-Agent Deep Research System with Model Context Protocol (MCP), React Web UI, and Multi-Provider LLM & Search Engine orchestration"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Open Source Contributors" }
+]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "crewai",
+    "deep-research",
+    "multi-agent",
+    "linkup",
+    "duckduckgo",
+    "ai-agents",
+    "research-assistant",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "crewai>=0.114.0",
+    "ddgs>=9.16.0",
+    "duckduckgo-search>=8.1.1",
+    "fastapi>=0.115.9",
+    "linkup-sdk>=0.2.4",
+    "mcp>=1.6.0",
+    "openai>=1.75.0",
+    "pydantic>=2.10.0",
+    "python-dotenv>=1.1.0",
+    "streamlit>=1.44.1",
+    "streamlit-crewai-process-output>=0.1.1",
+    "uvicorn>=0.34.1",
+]
+
+[project.scripts]
+deep-researcher-mcp = "server:main"
+deep-researcher-web = "api:main"
+deep-researcher-cli = "cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["tools", "agents.py", "server.py", "api.py", "cli.py"]
