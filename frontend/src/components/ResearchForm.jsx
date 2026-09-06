@@ -51,14 +51,14 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
           />
 
           {/* Bottom Controls Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-2.5 mt-1">
-            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t pt-3 mt-2">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 w-full sm:w-auto">
               {/* Depth Segmented Toggle */}
               <div className="flex items-center rounded-lg border bg-muted/40 p-0.5 text-xs">
                 <button
                   type="button"
                   onClick={() => setDepth("standard")}
-                  className={`rounded-md px-2 py-1 font-medium transition-all ${
+                  className={`rounded-md px-2.5 py-1 font-medium transition-all ${
                     depth === "standard"
                       ? "bg-background text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
@@ -69,7 +69,7 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
                 <button
                   type="button"
                   onClick={() => setDepth("deep")}
-                  className={`rounded-md px-2 py-1 font-medium transition-all ${
+                  className={`rounded-md px-2.5 py-1 font-medium transition-all ${
                     depth === "deep"
                       ? "bg-background text-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
@@ -80,12 +80,12 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
               </div>
 
               {/* Engine Selector */}
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <select
                   value={searchEngine}
                   onChange={(e) => setSearchEngine(e.target.value)}
                   disabled={isLoading}
-                  className="h-7 rounded-md border bg-background px-2 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus:ring-1 focus:ring-ring"
+                  className="w-full sm:w-auto h-8 rounded-lg border bg-background px-2.5 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus:ring-1 focus:ring-ring"
                 >
                   <option value="auto">Search: Auto (LinkUp / DDG)</option>
                   <option value="duckduckgo">Search: DuckDuckGo (Free)</option>
@@ -94,12 +94,12 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
               </div>
 
               {/* Model Provider Selector */}
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <select
                   value={provider}
                   onChange={(e) => setProvider(e.target.value)}
                   disabled={isLoading}
-                  className="h-7 rounded-md border bg-background px-2 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus:ring-1 focus:ring-ring"
+                  className="w-full sm:w-auto h-8 rounded-lg border bg-background px-2.5 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus:ring-1 focus:ring-ring"
                 >
                   <option value="gemini">Model: Google Gemini (Gemini 3.6 Flash)</option>
                   <option value="openai">Model: OpenAI (GPT-4o)</option>
@@ -116,7 +116,7 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
               type="submit"
               size="sm"
               disabled={!query.trim() || isLoading}
-              className="h-8 gap-1.5 px-3 font-medium"
+              className="w-full sm:w-auto h-8 gap-1.5 px-4 font-medium justify-center"
             >
               {isLoading ? (
                 <>
@@ -125,7 +125,7 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
                 </>
               ) : (
                 <>
-                  <span>Search</span>
+                  <span>Start Research</span>
                   <ArrowUp className="h-3.5 w-3.5" />
                 </>
               )}
@@ -135,7 +135,7 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
       </Card>
 
       {/* Suggestion Chips */}
-      <div className="mt-3 flex flex-wrap items-center gap-1.5 px-1 text-xs text-muted-foreground">
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-center text-xs text-muted-foreground">
         <span className="text-[11px] font-medium text-muted-foreground/70">Suggestions:</span>
         {SUGGESTED_TOPICS.map((topic, i) => (
           <button
@@ -143,7 +143,7 @@ export default function ResearchForm({ onStartResearch, isLoading, config }) {
             type="button"
             onClick={() => setQuery(topic)}
             disabled={isLoading}
-            className="rounded-md border bg-muted/20 px-2 py-0.5 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="rounded-full border bg-muted/20 px-3 py-1 text-xs text-muted-foreground transition-all hover:bg-muted hover:text-foreground hover:border-primary/40 cursor-pointer"
           >
             {topic}
           </button>

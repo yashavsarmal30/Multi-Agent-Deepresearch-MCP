@@ -227,7 +227,7 @@ async def stream_research(
                     search_engine=search_engine,
                     model=model,
                     provider=provider,
-                    api_key=api_key,
+                    api_key=api_key or gemini_key,
                 ),
             )
 

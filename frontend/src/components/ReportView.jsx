@@ -75,8 +75,8 @@ export default function ReportView({ result }) {
       {/* Top Document Card */}
       <Card className="border bg-card shadow-sm">
         {/* Document Action Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b p-4 sm:px-6">
-          <div className="space-y-1">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b p-4 sm:px-6 text-center sm:text-left">
+          <div className="space-y-1 flex flex-col items-center sm:items-start">
             <div className="flex items-center gap-2">
               <Badge variant="success" className="text-[10px] font-medium">
                 Research Report
@@ -92,7 +92,7 @@ export default function ReportView({ result }) {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 w-full sm:w-auto">
             <Button
               variant="outline"
               size="sm"

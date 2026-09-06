@@ -206,7 +206,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center">
       {/* Top Navbar */}
       <Header
         onOpenSettings={() => setIsSettingsOpen(true)}
@@ -218,31 +218,37 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="container max-w-4xl px-4 py-8 sm:py-12">
-        {/* Hero Title (minimal) */}
+      <main className="w-full max-w-4xl mx-auto px-4 py-8 sm:py-12 flex flex-col items-center">
+        {/* Hero Title */}
         {!activeReport && (
-          <div className="mb-8 text-center space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          <div className="mb-8 text-center space-y-3 max-w-xl mx-auto flex flex-col items-center">
+            <div className="inline-flex items-center gap-2 rounded-full border bg-muted/30 px-3 py-1 text-xs text-muted-foreground">
+              <Compass className="h-3.5 w-3.5 text-primary" />
+              <span>Multi-Agent Research Crew</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground text-center">
               What do you want to explore?
             </h1>
-            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-              Autonomous multi-agent research powered by CrewAI, LinkUp, and DuckDuckGo.
+            <p className="text-sm sm:text-base text-muted-foreground text-center max-w-md">
+              Autonomous multi-agent deep research powered by CrewAI, LinkUp, DuckDuckGo, and MCP.
             </p>
           </div>
         )}
 
         {/* Search & Configuration Input */}
-        <ResearchForm
-          onStartResearch={handleStartResearch}
-          isLoading={isLoading}
-          config={config}
-        />
+        <div className="w-full">
+          <ResearchForm
+            onStartResearch={handleStartResearch}
+            isLoading={isLoading}
+            config={config}
+          />
+        </div>
 
         {/* Error Alert */}
         {error && (
-          <div className="my-6 flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-xs sm:text-sm text-destructive">
+          <div className="w-full my-6 flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-xs sm:text-sm text-destructive">
             <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-            <div className="space-y-1">
+            <div className="space-y-1 flex-1">
               <h4 className="font-semibold">Research Error</h4>
               <p className="text-muted-foreground">{error}</p>
               <button
@@ -257,15 +263,19 @@ export default function App() {
 
         {/* Live Pipeline Tracker */}
         {isLoading && (
-          <AgentProgress
-            currentStage={currentStage}
-            stageMessage={stageMessage}
-          />
+          <div className="w-full">
+            <AgentProgress
+              currentStage={currentStage}
+              stageMessage={stageMessage}
+            />
+          </div>
         )}
 
         {/* Report Viewer */}
         {activeReport && (
-          <ReportView result={activeReport} />
+          <div className="w-full">
+            <ReportView result={activeReport} />
+          </div>
         )}
       </main>
 

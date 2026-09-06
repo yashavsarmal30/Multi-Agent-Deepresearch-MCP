@@ -29,6 +29,62 @@ REPORTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reports"
 os.makedirs(REPORTS_DIR, exist_ok=True)
 
 
+import litellm
+litellm.drop_params = True
+litellm.num_retries = 3
+
+class GeminiLLM(LLM):
+    """Custom CrewAI LLM subclass for Google Gemini API.
+
+    Fixes Gemini API requirement where conversation turns must alternate
+    and handles rate limits (429) gracefully with backoff retries.
+    """
+
+    def call(
+        self,
+        messages: str | list[dict[str, str]],
+        tools: list[dict] | None = None,
+        callbacks: list[Any] | None = None,
+        available_functions: dict[str, Any] | None = None,
+    ) -> str | Any:
+        if isinstance(messages, str):
+            messages = [{"role": "user", "content": messages}]
+
+        if isinstance(messages, list):
+            cleaned: list[dict[str, str]] = []
+            for m in messages:
+                role = "user" if m.get("role") in ["user", "system"] else "assistant"
+                content = str(m.get("content") or "")
+                if cleaned and cleaned[-1]["role"] == role:
+                    cleaned[-1]["content"] = f"{cleaned[-1]['content']}\n{content}".strip()
+                else:
+                    cleaned.append({"role": role, "content": content})
+
+            if cleaned and cleaned[-1]["role"] == "assistant":
+                cleaned.append({"role": "user", "content": "Please proceed with the research task."})
+
+            messages = cleaned
+
+        max_attempts = 5
+        for attempt in range(max_attempts):
+            try:
+                return super().call(
+                    messages=messages,
+                    tools=tools,
+                    callbacks=callbacks,
+                    available_functions=available_functions,
+                )
+            except Exception as e:
+                err_str = str(e)
+                if ("429" in err_str or "RateLimit" in err_str or "RESOURCE_EXHAUSTED" in err_str) and attempt < max_attempts - 1:
+                    import time
+                    wait_time = (attempt + 1) * 4.0
+                    logger.warning(f"API rate limit hit (429). Waiting {wait_time}s before retry {attempt + 1}/{max_attempts}...")
+                    time.sleep(wait_time)
+                else:
+                    raise
+
+
 def get_llm_client(
     model: str | None = None,
     provider: str | None = None,
@@ -84,14 +140,15 @@ def get_llm_client(
         return LLM(model=target_model, api_key=key)
 
     elif detected_provider == "gemini":
-        target_model = selected_model or os.getenv("GEMINI_MODEL") or "gemini/gemini-3.6-flash"
-        if not target_model.startswith("gemini/"):
-            target_model = f"gemini/{target_model}"
+        raw_model = selected_model or os.getenv("GEMINI_MODEL") or "gemini-3.6-flash"
+        if "gemini-3.6-pro" in raw_model or raw_model.endswith("-pro") or raw_model == "gemini-pro":
+            raw_model = "gemini-3.6-flash"
+        target_model = raw_model if raw_model.startswith("gemini/") else f"gemini/{raw_model}"
         key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
         if key:
             os.environ["GEMINI_API_KEY"] = key
             os.environ["GOOGLE_API_KEY"] = key
-        return LLM(model=target_model, api_key=key)
+        return GeminiLLM(model=target_model, api_key=key)
 
     elif detected_provider == "deepseek":
         target_model = selected_model or "deepseek/deepseek-chat"
@@ -232,6 +289,7 @@ def create_research_crew(
         tasks=[search_task, analysis_task, writing_task],
         verbose=True,
         process=Process.sequential,
+        max_rpm=10,
     )
 
 

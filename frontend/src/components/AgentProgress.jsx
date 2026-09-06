@@ -74,17 +74,17 @@ export default function AgentProgress({ currentStage, stageMessage }) {
         </div>
       </CardHeader>
 
-      <CardContent className="p-5">
+      <CardContent className="p-4 sm:p-6">
         {/* Status log pill */}
         {stageMessage && (
-          <div className="mb-4 rounded-md border bg-muted/40 px-3 py-2 text-xs text-foreground font-mono">
-            <span className="text-muted-foreground mr-2 font-sans">Status:</span>
-            {stageMessage}
+          <div className="mb-4 rounded-lg border bg-muted/30 px-3.5 py-2.5 text-xs text-foreground font-mono text-center sm:text-left flex flex-col sm:flex-row items-center gap-1.5 justify-center sm:justify-start">
+            <span className="text-muted-foreground font-sans font-medium">Status:</span>
+            <span>{stageMessage}</span>
           </div>
         )}
 
         {/* 3 Step Pipeline */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
           {steps.map((step, idx) => {
             const state = getStepState(idx);
             const Icon = step.icon;
