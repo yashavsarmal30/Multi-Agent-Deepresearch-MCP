@@ -5,7 +5,7 @@ import AgentProgress from "./components/AgentProgress";
 import ReportView from "./components/ReportView";
 import HistoryDrawer from "./components/HistoryDrawer";
 import SettingsModal from "./components/SettingsModal";
-import { AlertCircle, Sparkles, BookOpen, Compass } from "lucide-react";
+import { AlertCircle, Search, Compass, ShieldCheck } from "lucide-react";
 
 export default function App() {
   const [config, setConfig] = useState(null);
@@ -17,8 +17,17 @@ export default function App() {
   const [error, setError] = useState(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isDark, setIsDark] = useState(true);
 
-  // Load config and history on mount
+  // Sync dark class on mount and change
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDark]);
+
   useEffect(() => {
     fetchConfig();
     fetchHistory();
@@ -32,7 +41,7 @@ export default function App() {
         setConfig(data);
       }
     } catch (err) {
-      console.warn("Could not fetch config from /api/config:", err);
+      console.warn("Could not fetch config:", err);
     }
   };
 
@@ -55,11 +64,10 @@ export default function App() {
     setCurrentStage("init");
     setStageMessage(`Assembling research crew for "${params.query}"...`);
 
-    // Pull any cached keys from localStorage
     const linkupKey = localStorage.getItem("linkup_api_key") || "";
+    const geminiKey = localStorage.getItem("gemini_api_key") || "";
     const openaiKey = localStorage.getItem("openai_api_key") || "";
     const groqKey = localStorage.getItem("groq_api_key") || "";
-    const geminiKey = localStorage.getItem("gemini_api_key") || "";
 
     const queryParams = new URLSearchParams({
       query: params.query,
@@ -74,7 +82,6 @@ export default function App() {
     else if (geminiKey) queryParams.set("gemini_key", geminiKey);
     if (linkupKey) queryParams.set("linkup_key", linkupKey);
 
-    // Use SSE stream
     try {
       const eventSource = new EventSource(`/api/research/stream?${queryParams.toString()}`);
 
@@ -105,8 +112,6 @@ export default function App() {
       eventSource.onerror = (err) => {
         console.error("SSE connection error:", err);
         eventSource.close();
-
-        // Fallback to direct POST request if SSE closes prematurely
         fallbackPostResearch(params, openaiKey || groqKey, linkupKey, geminiKey);
       };
     } catch (err) {
@@ -153,7 +158,6 @@ export default function App() {
       const res = await fetch(`/api/history/${encodeURIComponent(filename)}`);
       if (res.ok) {
         const data = await res.json();
-        // Parse title from query or filename
         const cleanTitle = filename
           .replace(/^\d{8}_\d{6}_/, "")
           .replace(/\.md$/, "")
@@ -202,19 +206,32 @@ export default function App() {
   };
 
   return (
-    <div>
-      <div className="ambient-glow-1" />
-      <div className="ambient-glow-2" />
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Top Navbar */}
+      <Header
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenHistory={() => setIsHistoryOpen(true)}
+        config={config}
+        historyCount={history.length}
+        isDark={isDark}
+        onToggleTheme={() => setIsDark(!isDark)}
+      />
 
-      <div className="container">
-        <Header
-          onOpenSettings={() => setIsSettingsOpen(true)}
-          onOpenHistory={() => setIsHistoryOpen(true)}
-          config={config}
-          historyCount={history.length}
-        />
+      {/* Main Content Area */}
+      <main className="container max-w-4xl px-4 py-8 sm:py-12">
+        {/* Hero Title (minimal) */}
+        {!activeReport && (
+          <div className="mb-8 text-center space-y-2">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              What do you want to explore?
+            </h1>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              Autonomous multi-agent research powered by CrewAI, LinkUp, and DuckDuckGo.
+            </p>
+          </div>
+        )}
 
-        {/* Search & Configuration Form */}
+        {/* Search & Configuration Input */}
         <ResearchForm
           onStartResearch={handleStartResearch}
           isLoading={isLoading}
@@ -223,45 +240,22 @@ export default function App() {
 
         {/* Error Alert */}
         {error && (
-          <div style={{
-            display: "flex",
-            alignItems: "flex-start",
-            gap: "0.8rem",
-            background: "rgba(239, 68, 68, 0.12)",
-            border: "1px solid rgba(239, 68, 68, 0.4)",
-            borderRadius: "12px",
-            padding: "1rem 1.25rem",
-            marginBottom: "2rem",
-            color: "#fca5a5",
-          }}>
-            <AlertCircle size={22} color="#ef4444" style={{ flexShrink: 0, marginTop: "2px" }} />
-            <div style={{ flex: 1 }}>
-              <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#fecaca", marginBottom: "0.25rem" }}>
-                Investigation Halted
-              </h4>
-              <p style={{ fontSize: "0.85rem", lineHeight: 1.5 }}>
-                {error}
-              </p>
+          <div className="my-6 flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-xs sm:text-sm text-destructive">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <h4 className="font-semibold">Research Error</h4>
+              <p className="text-muted-foreground">{error}</p>
               <button
                 onClick={() => setIsSettingsOpen(true)}
-                style={{
-                  marginTop: "0.6rem",
-                  background: "rgba(239, 68, 68, 0.25)",
-                  border: "1px solid rgba(239, 68, 68, 0.5)",
-                  color: "#fff",
-                  padding: "4px 10px",
-                  borderRadius: "6px",
-                  fontSize: "0.8rem",
-                  cursor: "pointer",
-                }}
+                className="mt-2 inline-block rounded-md border border-destructive/40 bg-background px-2.5 py-1 text-xs font-medium text-foreground hover:bg-muted"
               >
-                Configure API Keys in Settings
+                Open Settings to configure API Keys
               </button>
             </div>
           </div>
         )}
 
-        {/* Multi-Agent Live Execution Timeline */}
+        {/* Live Pipeline Tracker */}
         {isLoading && (
           <AgentProgress
             currentStage={currentStage}
@@ -269,58 +263,13 @@ export default function App() {
           />
         )}
 
-        {/* Active Research Report View */}
+        {/* Report Viewer */}
         {activeReport && (
           <ReportView result={activeReport} />
         )}
+      </main>
 
-        {/* Empty state welcome card when idle */}
-        {!isLoading && !activeReport && !error && (
-          <div className="glass-card" style={{
-            textAlign: "center",
-            padding: "3.5rem 1.5rem",
-            border: "1px dashed var(--border-color)",
-          }}>
-            <div style={{
-              width: "60px",
-              height: "60px",
-              borderRadius: "16px",
-              background: "rgba(59, 130, 246, 0.1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 1.25rem",
-            }}>
-              <Compass size={30} color="#60a5fa" />
-            </div>
-            <h3 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-              Autonomous Multi-Agent Web Research
-            </h3>
-            <p style={{
-              maxWidth: "540px",
-              margin: "0 auto 1.5rem",
-              fontSize: "0.9rem",
-              color: "var(--text-secondary)",
-              lineHeight: 1.6,
-            }}>
-              Ask complex research questions. The crew will formulate search queries, harvest live web sources with citations via LinkUp and DuckDuckGo, analyze conflicting findings, and compose a publication-grade report.
-            </p>
-            <div style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "1.5rem",
-              fontSize: "0.8rem",
-              color: "var(--text-muted)",
-            }}>
-              <span>✓ No Auth Required</span>
-              <span>✓ LinkUp & DuckDuckGo</span>
-              <span>✓ MCP Server Included</span>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* History Drawer */}
+      {/* Slide-over History Drawer */}
       <HistoryDrawer
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
@@ -329,7 +278,7 @@ export default function App() {
         onDeleteReport={handleDeleteReport}
       />
 
-      {/* Settings Modal */}
+      {/* Settings Dialog */}
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

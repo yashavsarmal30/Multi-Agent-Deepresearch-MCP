@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from "react";
 import { marked } from "marked";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { Copy, Download, Printer, Check, ExternalLink, BookOpen, Clock, FileText } from "lucide-react";
 
 export default function ReportView({ result }) {
   const [copied, setCopied] = useState(false);
 
   const reportText = result?.report || "";
-  const query = result?.query || "Research Report";
+  const query = result?.query || "Research Synthesis";
 
   // Parse markdown HTML
   const parsedHtml = useMemo(() => {
@@ -27,7 +30,13 @@ export default function ReportView({ result }) {
       const [, title, url] = match;
       if (!seenUrls.has(url)) {
         seenUrls.add(url);
-        matches.push({ title, url });
+        let hostname = "";
+        try {
+          hostname = new URL(url).hostname.replace(/^www\./, "");
+        } catch {
+          hostname = "link";
+        }
+        matches.push({ title, url, hostname });
       }
     }
     return matches;
@@ -35,7 +44,7 @@ export default function ReportView({ result }) {
 
   // Word count and reading time
   const stats = useMemo(() => {
-    const words = reportText.trim().split(/\s+/).length;
+    const words = reportText.trim().split(/\s+/).filter(Boolean).length;
     const readMinutes = Math.max(1, Math.round(words / 200));
     return { words, readMinutes };
   }, [reportText]);
@@ -62,168 +71,122 @@ export default function ReportView({ result }) {
   };
 
   return (
-    <div className="glass-card" style={{ marginBottom: "3rem" }}>
-      {/* Top Action Bar */}
-      <div style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        flexWrap: "wrap",
-        gap: "1rem",
-        paddingBottom: "1.2rem",
-        marginBottom: "1.5rem",
-        borderBottom: "1px solid var(--border-color)",
-      }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
-            <span style={{
-              background: "rgba(16, 185, 129, 0.15)",
-              color: "#34d399",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              padding: "2px 8px",
-              borderRadius: "999px",
-            }}>
-              Synthesis Complete
-            </span>
-            <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "4px" }}>
-              <Clock size={13} /> {stats.readMinutes} min read ({stats.words} words)
-            </span>
+    <div className="w-full my-6 space-y-6">
+      {/* Top Document Card */}
+      <Card className="border bg-card shadow-sm">
+        {/* Document Action Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b p-4 sm:px-6">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Badge variant="success" className="text-[10px] font-medium">
+                Research Report
+              </Badge>
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                {stats.readMinutes} min read ({stats.words} words)
+              </span>
+            </div>
+            <h1 className="text-lg sm:text-xl font-bold tracking-tight text-foreground">
+              {query}
+            </h1>
           </div>
-          <h2 style={{ fontSize: "1.4rem", fontWeight: 700, color: "#ffffff" }}>
-            {query}
-          </h2>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopy}
+              className="h-8 gap-1.5 text-xs font-medium"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-500" />
+                  <span>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span>Copy</span>
+                </>
+              )}
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="h-8 gap-1.5 text-xs font-medium"
+            >
+              <Download className="h-3.5 w-3.5 text-muted-foreground" />
+              <span>Download .md</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePrint}
+              className="h-8 gap-1.5 text-xs font-medium hidden sm:inline-flex"
+            >
+              <Printer className="h-3.5 w-3.5 text-muted-foreground" />
+              <span>Print</span>
+            </Button>
+          </div>
         </div>
 
-        {/* Buttons */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <button
-            onClick={handleCopy}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.4rem",
-              padding: "0.5rem 0.9rem",
-              background: copied ? "rgba(16, 185, 129, 0.2)" : "rgba(255, 255, 255, 0.05)",
-              border: `1px solid ${copied ? "#10b981" : "var(--border-color)"}`,
-              borderRadius: "8px",
-              color: copied ? "#34d399" : "var(--text-primary)",
-              fontSize: "0.85rem",
-              fontWeight: 500,
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-          >
-            {copied ? <Check size={16} /> : <Copy size={16} />}
-            <span>{copied ? "Copied!" : "Copy MD"}</span>
-          </button>
+        {/* Markdown Content */}
+        <CardContent className="p-6 sm:p-8">
+          <article
+            className="prose prose-zinc dark:prose-invert max-w-none text-foreground text-sm sm:text-base leading-relaxed
+              prose-headings:font-semibold prose-headings:tracking-tight
+              prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:border-b prose-h1:pb-2 prose-h1:mt-6 prose-h1:mb-4
+              prose-h2:text-lg sm:prose-h2:text-xl prose-h2:mt-5 prose-h2:mb-3
+              prose-h3:text-base sm:prose-h3:text-lg
+              prose-p:my-3 prose-p:leading-relaxed
+              prose-ul:my-2 prose-li:my-1
+              prose-table:w-full prose-table:border-collapse prose-table:my-4
+              prose-th:border prose-th:border-border prose-th:bg-muted/40 prose-th:p-2.5 prose-th:text-xs prose-th:font-semibold
+              prose-td:border prose-td:border-border prose-td:p-2.5 prose-td:text-xs
+              prose-blockquote:border-l-2 prose-blockquote:border-primary prose-blockquote:bg-muted/20 prose-blockquote:py-1 prose-blockquote:px-3 prose-blockquote:rounded-r prose-blockquote:italic
+              prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono
+              prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-lg prose-pre:p-4"
+            dangerouslySetInnerHTML={{ __html: parsedHtml }}
+          />
+        </CardContent>
+      </Card>
 
-          <button
-            onClick={handleDownload}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.4rem",
-              padding: "0.5rem 0.9rem",
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "8px",
-              color: "var(--text-primary)",
-              fontSize: "0.85rem",
-              fontWeight: 500,
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-          >
-            <Download size={16} />
-            <span>Download</span>
-          </button>
-
-          <button
-            onClick={handlePrint}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.4rem",
-              padding: "0.5rem 0.9rem",
-              background: "rgba(255, 255, 255, 0.05)",
-              border: "1px solid var(--border-color)",
-              borderRadius: "8px",
-              color: "var(--text-primary)",
-              fontSize: "0.85rem",
-              fontWeight: 500,
-              cursor: "pointer",
-              transition: "all 0.2s",
-            }}
-          >
-            <Printer size={16} />
-            <span>Print</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Rendered Markdown Content */}
-      <article
-        className="markdown-body"
-        dangerouslySetInnerHTML={{ __html: parsedHtml }}
-      />
-
-      {/* Extracted Sources Pill Shelf */}
+      {/* Sources Grid Card */}
       {sources.length > 0 && (
-        <div style={{
-          marginTop: "2.5rem",
-          paddingTop: "1.5rem",
-          borderTop: "1px solid var(--border-color)",
-        }}>
-          <h4 style={{
-            fontSize: "0.95rem",
-            fontWeight: 600,
-            color: "#93c5fd",
-            marginBottom: "0.8rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-          }}>
-            <BookOpen size={16} />
-            Verified Citations & External Sources ({sources.length})
-          </h4>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-            {sources.map((src, idx) => (
+        <Card className="border bg-card shadow-sm p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <BookOpen className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">
+              References & Verified Sources ({sources.length})
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {sources.map((src, i) => (
               <a
-                key={idx}
+                key={i}
                 href={src.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.4rem",
-                  background: "rgba(59, 130, 246, 0.08)",
-                  border: "1px solid rgba(59, 130, 246, 0.2)",
-                  borderRadius: "8px",
-                  padding: "4px 10px",
-                  fontSize: "0.8rem",
-                  color: "#93c5fd",
-                  textDecoration: "none",
-                  transition: "all 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(59, 130, 246, 0.2)";
-                  e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.4)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(59, 130, 246, 0.08)";
-                  e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.2)";
-                }}
+                className="group flex flex-col justify-between rounded-lg border bg-muted/20 p-2.5 transition-all hover:border-primary/40 hover:bg-muted/40"
               >
-                <span style={{ maxWidth: "260px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {src.title || src.url}
+                <div className="flex items-start justify-between gap-1.5">
+                  <span className="text-xs font-medium text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                    {src.title || src.hostname}
+                  </span>
+                  <ExternalLink className="h-3 w-3 text-muted-foreground flex-shrink-0 group-hover:text-primary transition-colors" />
+                </div>
+                <span className="mt-1 text-[11px] text-muted-foreground truncate">
+                  {src.hostname}
                 </span>
-                <ExternalLink size={12} />
               </a>
             ))}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

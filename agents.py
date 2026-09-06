@@ -84,7 +84,7 @@ def get_llm_client(
         return LLM(model=target_model, api_key=key)
 
     elif detected_provider == "gemini":
-        target_model = selected_model or os.getenv("GEMINI_MODEL") or "gemini/gemini-3.6-pro"
+        target_model = selected_model or os.getenv("GEMINI_MODEL") or "gemini/gemini-3.6-flash"
         if not target_model.startswith("gemini/"):
             target_model = f"gemini/{target_model}"
         key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")

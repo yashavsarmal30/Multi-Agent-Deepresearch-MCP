@@ -29,7 +29,7 @@ Features a full **Model Context Protocol (MCP) server** for AI clients (Cursor, 
   - **DuckDuckGo (Free)**: Zero setup, privacy-preserving live web search out of the box—no API key required!
   - **Intelligent Fallback**: Seamlessly uses LinkUp when configured, and falls back to DuckDuckGo automatically.
 - 🧠 **Multi-Provider LLM Orchestration**:
-  - Auto-detects and connects to **Google Gemini** (`gemini-3.6-pro`, `gemini-3.8-flash`, `gemini-2.5-flash`), **OpenAI** (`gpt-4o`, `gpt-4o-mini`), **Groq** (`llama-3.3-70b`), **Anthropic** (`claude-3-5-sonnet`), **DeepSeek**, or local **Ollama** (`deepseek-r1`, `llama3`).
+  - Auto-detects and connects to **Google Gemini** (`gemini-3.6-flash`, `gemini-3.8-flash`, `gemini-2.5-flash`), **OpenAI** (`gpt-4o`, `gpt-4o-mini`), **Groq** (`llama-3.3-70b`), **Anthropic** (`claude-3-5-sonnet`), **DeepSeek**, or local **Ollama** (`deepseek-r1`, `llama3`).
 - 💻 **Modern React.js Web UI**:
   - **No login or authentication needed**—start researching immediately.
   - Live animated multi-agent activity stages with real-time status updates (SSE).

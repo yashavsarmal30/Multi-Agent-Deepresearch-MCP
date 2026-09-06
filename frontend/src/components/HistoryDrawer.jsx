@@ -1,9 +1,21 @@
 import React from "react";
-import { X, FileText, Trash2, Calendar, ExternalLink } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "./ui/sheet";
+import { Button } from "./ui/button";
+import { Trash2, Calendar, FileText } from "lucide-react";
 
-export default function HistoryDrawer({ isOpen, onClose, history, onSelectReport, onDeleteReport }) {
-  if (!isOpen) return null;
-
+export default function HistoryDrawer({
+  isOpen,
+  onClose,
+  history,
+  onSelectReport,
+  onDeleteReport,
+}) {
   const formatDate = (isoStr) => {
     try {
       const d = new Date(isoStr);
@@ -19,7 +31,6 @@ export default function HistoryDrawer({ isOpen, onClose, history, onSelectReport
   };
 
   const formatTitle = (filename) => {
-    // Remove date prefix and .md extension: 20260306_120000_topic_name.md -> Topic Name
     return filename
       .replace(/^\d{8}_\d{6}_/, "")
       .replace(/\.md$/, "")
@@ -28,141 +39,67 @@ export default function HistoryDrawer({ isOpen, onClose, history, onSelectReport
   };
 
   return (
-    <div style={{
-      position: "fixed",
-      top: 0,
-      right: 0,
-      bottom: 0,
-      width: "100%",
-      maxWidth: "420px",
-      background: "#0d1322",
-      borderLeft: "1px solid var(--border-color)",
-      zIndex: 100,
-      boxShadow: "-10px 0 30px rgba(0, 0, 0, 0.6)",
-      display: "flex",
-      flexDirection: "column",
-    }}>
-      {/* Drawer Header */}
-      <div style={{
-        padding: "1.25rem 1.5rem",
-        borderBottom: "1px solid var(--border-color)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <FileText size={18} color="#60a5fa" />
-          <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>
-            Research History ({history.length})
-          </h3>
-        </div>
-        <button
-          onClick={onClose}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "var(--text-secondary)",
-            cursor: "pointer",
-            padding: "4px",
-          }}
-        >
-          <X size={20} />
-        </button>
-      </div>
-
-      {/* Reports List */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "1rem 1.5rem" }}>
-        {history.length === 0 ? (
-          <div style={{
-            textAlign: "center",
-            padding: "3rem 1rem",
-            color: "var(--text-muted)",
-          }}>
-            <FileText size={36} style={{ margin: "0 auto 1rem", opacity: 0.4 }} />
-            <p style={{ fontSize: "0.95rem" }}>No research reports saved yet.</p>
-            <p style={{ fontSize: "0.8rem", marginTop: "0.5rem" }}>
-              Run a research query to generate and archive reports.
-            </p>
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent side="right" className="flex flex-col p-6 w-full sm:max-w-md">
+        <SheetHeader className="pb-4 border-b">
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary" />
+            <SheetTitle className="text-base font-semibold">
+              Research History ({history.length})
+            </SheetTitle>
           </div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            {history.map((item) => (
+          <SheetDescription className="text-xs text-muted-foreground">
+            Previously archived research reports saved to disk.
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="flex-1 overflow-y-auto py-4 space-y-2">
+          {history.length === 0 ? (
+            <div className="py-12 text-center text-xs text-muted-foreground">
+              <FileText className="h-8 w-8 mx-auto mb-2 opacity-30" />
+              <p>No saved reports found.</p>
+              <p className="mt-1 text-[11px]">Run a research query to archive reports.</p>
+            </div>
+          ) : (
+            history.map((item) => (
               <div
                 key={item.filename}
-                style={{
-                  background: "rgba(255, 255, 255, 0.03)",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "10px",
-                  padding: "0.85rem 1rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: "0.75rem",
-                  transition: "all 0.15s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.4)";
-                  e.currentTarget.style.background = "rgba(59, 130, 246, 0.06)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border-color)";
-                  e.currentTarget.style.background = "rgba(255, 255, 255, 0.03)";
-                }}
+                className="group flex items-center justify-between rounded-lg border bg-card p-3 transition-colors hover:border-primary/40 hover:bg-muted/30"
               >
                 <div
                   onClick={() => {
                     onSelectReport(item.filename);
                     onClose();
                   }}
-                  style={{ flex: 1, cursor: "pointer" }}
+                  className="flex-1 cursor-pointer pr-2 overflow-hidden"
                 >
-                  <h4 style={{
-                    fontSize: "0.9rem",
-                    fontWeight: 600,
-                    color: "#f1f5f9",
-                    marginBottom: "0.25rem",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}>
+                  <h4 className="text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                     {formatTitle(item.filename)}
                   </h4>
-                  <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                    fontSize: "0.75rem",
-                    color: "var(--text-muted)",
-                  }}>
-                    <Calendar size={12} />
-                    <span>{formatDate(item.created_at)}</span>
+                  <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {formatDate(item.created_at)}
+                    </span>
                     <span>•</span>
                     <span>{Math.round(item.size_bytes / 1024)} KB</span>
                   </div>
                 </div>
 
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => onDeleteReport(item.filename)}
+                  className="h-7 w-7 text-muted-foreground opacity-60 hover:opacity-100 hover:text-destructive"
                   title="Delete report"
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: "var(--text-muted)",
-                    cursor: "pointer",
-                    padding: "6px",
-                    borderRadius: "6px",
-                    transition: "color 0.15s",
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = "#ef4444"}
-                  onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-muted)"}
                 >
-                  <Trash2 size={16} />
-                </button>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+            ))
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
