@@ -7,6 +7,7 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
   const [linkupKey, setLinkupKey] = useState("");
   const [openaiKey, setOpenaiKey] = useState("");
   const [groqKey, setGroqKey] = useState("");
+  const [geminiKey, setGeminiKey] = useState("");
   const [anthropicKey, setAnthropicKey] = useState("");
   const [ollamaUrl, setOllamaUrl] = useState("http://localhost:11434");
   const [saveStatus, setSaveStatus] = useState("");
@@ -15,6 +16,7 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
     // Load existing keys from localStorage if available
     setLinkupKey(localStorage.getItem("linkup_api_key") || "");
     setOpenaiKey(localStorage.getItem("openai_api_key") || "");
+    setGeminiKey(localStorage.getItem("gemini_api_key") || "");
     setGroqKey(localStorage.getItem("groq_api_key") || "");
     setAnthropicKey(localStorage.getItem("anthropic_api_key") || "");
     setOllamaUrl(localStorage.getItem("ollama_base_url") || "http://localhost:11434");
@@ -27,6 +29,7 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
     // Save to localStorage
     if (linkupKey) localStorage.setItem("linkup_api_key", linkupKey);
     if (openaiKey) localStorage.setItem("openai_api_key", openaiKey);
+    if (geminiKey) localStorage.setItem("gemini_api_key", geminiKey);
     if (groqKey) localStorage.setItem("groq_api_key", groqKey);
     if (anthropicKey) localStorage.setItem("anthropic_api_key", anthropicKey);
     if (ollamaUrl) localStorage.setItem("ollama_base_url", ollamaUrl);
@@ -35,6 +38,7 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
     const payload = {};
     if (linkupKey) payload.linkup_api_key = linkupKey;
     if (openaiKey) payload.openai_api_key = openaiKey;
+    if (geminiKey) payload.gemini_api_key = geminiKey;
     if (groqKey) payload.groq_api_key = groqKey;
     if (anthropicKey) payload.anthropic_api_key = anthropicKey;
     if (ollamaUrl) payload.ollama_base_url = ollamaUrl;
@@ -150,6 +154,40 @@ export default function SettingsModal({ isOpen, onClose, config, onSaveConfig })
                 value={openaiKey}
                 onChange={(e) => setOpenaiKey(e.target.value)}
                 placeholder={config?.providers?.openai ? "●●●●●●●●●●●● (Configured via env)" : "sk-..."}
+                style={{
+                  width: "100%",
+                  padding: "0.6rem 0.8rem",
+                  background: "rgba(0, 0, 0, 0.4)",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "8px",
+                  color: "#fff",
+                  fontSize: "0.9rem",
+                  fontFamily: "var(--font-mono)",
+                  outline: "none",
+                }}
+              />
+            </div>
+
+            {/* Google Gemini Key */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.35rem" }}>
+                <label style={{ fontSize: "0.85rem", fontWeight: 600, color: "#cbd5e1" }}>
+                  Google Gemini API Key
+                </label>
+                <a
+                  href="https://aistudio.google.com/apikey"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ fontSize: "0.75rem", color: "#60a5fa", display: "flex", alignItems: "center", gap: "2px" }}
+                >
+                  Get free key <ExternalLink size={11} />
+                </a>
+              </div>
+              <input
+                type="password"
+                value={geminiKey}
+                onChange={(e) => setGeminiKey(e.target.value)}
+                placeholder={config?.providers?.gemini ? "●●●●●●●●●●●● (Configured via env)" : "AIzaSy..."}
                 style={{
                   width: "100%",
                   padding: "0.6rem 0.8rem",

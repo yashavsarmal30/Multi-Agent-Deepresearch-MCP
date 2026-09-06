@@ -59,6 +59,7 @@ export default function App() {
     const linkupKey = localStorage.getItem("linkup_api_key") || "";
     const openaiKey = localStorage.getItem("openai_api_key") || "";
     const groqKey = localStorage.getItem("groq_api_key") || "";
+    const geminiKey = localStorage.getItem("gemini_api_key") || "";
 
     const queryParams = new URLSearchParams({
       query: params.query,
@@ -67,8 +68,10 @@ export default function App() {
     });
 
     if (params.provider) queryParams.set("provider", params.provider);
-    if (openaiKey) queryParams.set("api_key", openaiKey);
+    if (params.provider === "gemini" && geminiKey) queryParams.set("gemini_key", geminiKey);
+    else if (openaiKey) queryParams.set("api_key", openaiKey);
     else if (groqKey) queryParams.set("api_key", groqKey);
+    else if (geminiKey) queryParams.set("gemini_key", geminiKey);
     if (linkupKey) queryParams.set("linkup_key", linkupKey);
 
     // Use SSE stream
@@ -104,14 +107,14 @@ export default function App() {
         eventSource.close();
 
         // Fallback to direct POST request if SSE closes prematurely
-        fallbackPostResearch(params, openaiKey || groqKey, linkupKey);
+        fallbackPostResearch(params, openaiKey || groqKey, linkupKey, geminiKey);
       };
     } catch (err) {
-      fallbackPostResearch(params, openaiKey || groqKey, linkupKey);
+      fallbackPostResearch(params, openaiKey || groqKey, linkupKey, geminiKey);
     }
   };
 
-  const fallbackPostResearch = async (params, apiKey, linkupKey) => {
+  const fallbackPostResearch = async (params, apiKey, linkupKey, geminiKey) => {
     try {
       setStageMessage("Running research pipeline...");
       const res = await fetch("/api/research", {
@@ -124,6 +127,7 @@ export default function App() {
           provider: params.provider,
           api_key: apiKey || null,
           linkup_api_key: linkupKey || null,
+          gemini_api_key: geminiKey || null,
         }),
       });
 

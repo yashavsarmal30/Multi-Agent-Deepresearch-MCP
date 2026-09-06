@@ -21,6 +21,8 @@ if "openai_api_key" not in st.session_state:
     st.session_state.openai_api_key = os.getenv("OPENAI_API_KEY", "")
 if "groq_api_key" not in st.session_state:
     st.session_state.groq_api_key = os.getenv("GROQ_API_KEY", "")
+if "gemini_api_key" not in st.session_state:
+    st.session_state.gemini_api_key = os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")
 
 
 def reset_chat():
@@ -97,8 +99,20 @@ with st.sidebar:
         st.session_state.groq_api_key = groq_key
         os.environ["GROQ_API_KEY"] = groq_key
 
+    gemini_key = st.text_input(
+        "Google Gemini API Key",
+        value=st.session_state.gemini_api_key,
+        type="password",
+        help="Required if using Google Gemini provider.",
+    )
+    if gemini_key:
+        st.session_state.gemini_api_key = gemini_key
+        os.environ["GEMINI_API_KEY"] = gemini_key
+        os.environ["GOOGLE_API_KEY"] = gemini_key
+
     st.markdown("---")
     st.markdown("[Get LinkUp API key](https://app.linkup.so/sign-up)")
+    st.markdown("[Get Google Gemini API key](https://aistudio.google.com/apikey)")
     st.markdown("[Get Groq API key](https://console.groq.com/keys)")
 
 # Header

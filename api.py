@@ -58,6 +58,7 @@ class ResearchRequest(BaseModel):
     provider: str | None = Field(default=None, description="LLM Provider override")
     api_key: str | None = Field(default=None, description="Optional LLM API key override")
     linkup_api_key: str | None = Field(default=None, description="Optional LinkUp API key override")
+    gemini_api_key: str | None = Field(default=None, description="Optional Google Gemini API key override")
 
 
 class SearchRequest(BaseModel):
@@ -144,6 +145,7 @@ def update_config(body: ConfigUpdateRequest) -> dict[str, Any]:
         os.environ["ANTHROPIC_API_KEY"] = body.anthropic_api_key.strip()
     if body.gemini_api_key is not None:
         os.environ["GEMINI_API_KEY"] = body.gemini_api_key.strip()
+        os.environ["GOOGLE_API_KEY"] = body.gemini_api_key.strip()
     if body.deepseek_api_key is not None:
         os.environ["DEEPSEEK_API_KEY"] = body.deepseek_api_key.strip()
     if body.ollama_base_url is not None:
@@ -172,6 +174,9 @@ async def execute_research(req: ResearchRequest) -> dict[str, Any]:
     """Execute research and return complete Markdown report."""
     if req.linkup_api_key:
         os.environ["LINKUP_API_KEY"] = req.linkup_api_key.strip()
+    if req.gemini_api_key:
+        os.environ["GEMINI_API_KEY"] = req.gemini_api_key.strip()
+        os.environ["GOOGLE_API_KEY"] = req.gemini_api_key.strip()
 
     result = await async_run_research(
         query=req.query,
@@ -179,7 +184,7 @@ async def execute_research(req: ResearchRequest) -> dict[str, Any]:
         search_engine=req.search_engine,
         model=req.model,
         provider=req.provider,
-        api_key=req.api_key,
+        api_key=req.api_key or req.gemini_api_key,
     )
     return result
 
@@ -193,10 +198,14 @@ async def stream_research(
     provider: str | None = None,
     api_key: str | None = None,
     linkup_key: str | None = None,
+    gemini_key: str | None = None,
 ) -> StreamingResponse:
     """Stream research execution stages and output using Server-Sent Events (SSE)."""
     if linkup_key:
         os.environ["LINKUP_API_KEY"] = linkup_key.strip()
+    if gemini_key:
+        os.environ["GEMINI_API_KEY"] = gemini_key.strip()
+        os.environ["GOOGLE_API_KEY"] = gemini_key.strip()
 
     async def event_generator():
         yield f"data: {json.dumps({'type': 'stage', 'stage': 'init', 'message': f'Initializing Multi-Agent Crew for: {query}'})}\n\n"

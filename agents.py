@@ -88,6 +88,9 @@ def get_llm_client(
         if not target_model.startswith("gemini/"):
             target_model = f"gemini/{target_model}"
         key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        if key:
+            os.environ["GEMINI_API_KEY"] = key
+            os.environ["GOOGLE_API_KEY"] = key
         return LLM(model=target_model, api_key=key)
 
     elif detected_provider == "deepseek":
